@@ -6,14 +6,14 @@ import (
 	"net/http"
 )
 
-func helloHandler(w http.ResponseWriter, r *http.Request) {
+func signHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "Sign.html")
 	fmt.Printf("%s\n", r.FormValue("pswIn"))
 
 }
 func Serve() {
 
-	http.HandleFunc("/", helloHandler)
+	http.HandleFunc("/", signHandler)
 	//
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
