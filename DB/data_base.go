@@ -125,9 +125,9 @@ func selectUser(db *sql.DB, username string) (password string, urlNum int) {
 
 }
 
-func selectUrl(db *sql.DB, url string) (id int, HealthCheck int) {
+func selectUrl(db *sql.DB, url string, userName string) (id int, HealthCheck int) {
 
-	results, err0 := db.Query("SELECT id, HealthCheck FROM urls where url = ?", url)
+	results, err0 := db.Query("SELECT id, HealthCheck FROM urls where url = ? and userName = ?", url, userName)
 	if err0 != nil {
 		panic(err0.Error()) // proper error handling instead of panic in your app
 	}
