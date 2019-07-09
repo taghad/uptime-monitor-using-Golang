@@ -3,6 +3,7 @@ package DB
 import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
+	"log"
 	"time"
 )
 
@@ -99,5 +100,54 @@ func insertNewReq(db *sql.DB, url_id int, state int, status_code int, respTime i
 	if err1 != nil {
 		panic(err1.Error())
 	}
+
+}
+
+//select funcs :
+
+func selectUser(db *sql.DB, username string) (password string, urlNum int) {
+
+	results, err0 := db.Query("SELECT password, urlNum FROM users where userName = ?", username)
+	if err0 != nil {
+		panic(err0.Error()) // proper error handling instead of panic in your app
+	}
+
+	hasNext := results.Next()
+	if hasNext == true {
+		results.Scan(&password, &urlNum)
+		return password, urlNum
+	}
+	//user not found
+	{
+		log.Print("user not found")
+		return "", 0
+	}
+
+}
+
+func selectUrl(db *sql.DB, url string) (id int, HealthCheck int) {
+
+	results, err0 := db.Query("SELECT id, HealthCheck FROM urls where url = ?", url)
+	if err0 != nil {
+		panic(err0.Error()) // proper error handling instead of panic in your app
+	}
+
+	hasNext := results.Next()
+	if hasNext == true {
+		results.Scan(&id, &HealthCheck)
+		return id, HealthCheck
+	}
+	//url not found
+	{
+		log.Print("url not found")
+		return 0, 0
+	}
+
+}
+
+//not complete
+func selectreq(db *sql.DB) (url_id int, state int, status_code int, respTime int, timest string) {
+	//nothing
+	return 0, 0, 0, 0, "0"
 
 }
