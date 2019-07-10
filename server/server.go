@@ -25,6 +25,10 @@ func signUp(db *sql.DB, userName string, password string) {
 	}
 
 }
+func acc(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, fmt.Sprintf("./%s/getUrls.html", "server/"))
+
+}
 
 func signIn(db *sql.DB, userName string, passIn string) {
 	if (strings.Compare(userName, "") & strings.Compare(passIn, "")) != 0 {
@@ -33,6 +37,7 @@ func signIn(db *sql.DB, userName string, passIn string) {
 
 		if (strings.Compare(password, passIn)) == 0 {
 			log.Println(userName + " Logged-in")
+			http.HandleFunc("/"+userName, acc)
 		} else {
 			log.Println("your inf isn't true")
 		}
@@ -49,7 +54,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 func Serve() {
 
 	http.HandleFunc("/", homeHandler)
-	err := http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServe(":1666", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe", err)
 	} else {
