@@ -161,7 +161,6 @@ func SelectUrl(db *sql.DB, url string, userName string) (id int, HealthCheck int
 
 }
 
-//not complete
 func Selectreq(db *sql.DB, url_id int) {
 	results, err0 := db.Query("SELECT state, status_code, respTime, timestamp FROM reqs where url_id = ?", url_id)
 	if err0 != nil {
