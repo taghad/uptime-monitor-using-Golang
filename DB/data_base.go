@@ -57,14 +57,12 @@ func ConnectDB(user string, password string) *sql.DB {
 	createUrlsTable(db)
 	createReqsTable(db)
 
-	selectreq(db, 10)
-
-	defer db.Close()
+	//defer db.Close()
 	return db
 }
 
 //insert to urls table
-func insertNewURL(db *sql.DB, urlId int, url string, user string, healthCheckType int, respOkTime int, respWarTime int, respCritTime int) {
+func InsertNewURL(db *sql.DB, urlId int, url string, user string, healthCheckType int, respOkTime int, respWarTime int, respCritTime int) {
 
 	st, err0 := db.Prepare("insert into urls (id, url, userName, HealthCheck, respOkTime, respWarTime, respCritTime) values (?,?,?,?,?,?,?)")
 	if err0 != nil {
@@ -78,7 +76,7 @@ func insertNewURL(db *sql.DB, urlId int, url string, user string, healthCheckTyp
 
 }
 
-func insertNewUser(db *sql.DB, userName string, password string) {
+func InsertNewUser(db *sql.DB, userName string, password string) {
 
 	st, err0 := db.Prepare("insert into users (userName, password, urlNum) values (?,?,?)")
 	if err0 != nil {
@@ -92,7 +90,7 @@ func insertNewUser(db *sql.DB, userName string, password string) {
 
 }
 
-func insertNewReq(db *sql.DB, url_id int, state int, status_code int, respTime int) {
+func InsertNewReq(db *sql.DB, url_id int, state int, status_code int, respTime int) {
 
 	st, err0 := db.Prepare("insert into reqs (url_id, state, status_code, respTime, timestamp ) values (?,?,?,?,?)")
 	if err0 != nil {
@@ -123,7 +121,7 @@ func printReq(state int, status_code int, respTime int, timest string) {
 
 //select funcs :
 
-func selectUser(db *sql.DB, username string) (password string, urlNum int) {
+func SelectUser(db *sql.DB, username string) (password string, urlNum int) {
 
 	results, err0 := db.Query("SELECT password, urlNum FROM users where userName = ?", username)
 	if err0 != nil {
@@ -143,7 +141,7 @@ func selectUser(db *sql.DB, username string) (password string, urlNum int) {
 
 }
 
-func selectUrl(db *sql.DB, url string, userName string) (id int, HealthCheck int) {
+func SelectUrl(db *sql.DB, url string, userName string) (id int, HealthCheck int) {
 
 	results, err0 := db.Query("SELECT id, HealthCheck FROM urls where url = ? and userName = ?", url, userName)
 	if err0 != nil {
@@ -164,7 +162,7 @@ func selectUrl(db *sql.DB, url string, userName string) (id int, HealthCheck int
 }
 
 //not complete
-func selectreq(db *sql.DB, url_id int) {
+func Selectreq(db *sql.DB, url_id int) {
 	results, err0 := db.Query("SELECT state, status_code, respTime, timestamp FROM reqs where url_id = ?", url_id)
 	if err0 != nil {
 		panic(err0.Error())
