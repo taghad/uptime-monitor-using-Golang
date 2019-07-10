@@ -20,7 +20,7 @@ func main() {
 	}
 	fmt.Println(resp.StatusCode)
 
-	fmt.Printf("resp time %f", elapsed.Seconds())
+	fmt.Printf("resp time %d", elapsed.Nanoseconds())
 	DB.ConnectDB("manager", "123456")
 
 	server.Serve()
