@@ -45,9 +45,24 @@ func signIn(db *sql.DB, userName string, passIn string) {
 	}
 
 }
+
+func loginHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("gogo")
+	http.ServeFile(w, r, "server/Sign.html")
+	params := mux.Vars(r)
+	user := params["newUser"]
+	fmt.Println(user + "11")
+	fmt.Println("gogo")
+
+}
+
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "server/Sign.html")
-
+	//params := mux.Vars(r)
+	//shortLink := params["url"]
+	//fmt.Println(shortLink)
+	//params := mux.Vars(r)
+	//shortLink := params["newUser"]
 	//	db := DB.ConnectDB("manager", "123456")
 	//	go signUp(db, r.FormValue("newUser"), r.FormValue("newPsw"))
 	//	go signIn(db, r.FormValue("userIn"), r.FormValue("pswIn"))
@@ -56,7 +71,10 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 func handleRequset() {
 	myRouter := mux.NewRouter().StrictSlash(true)
 	DB.ConnectDB("manager", "123456")
-	myRouter.HandleFunc("/", homeHandler)
+
+	myRouter.HandleFunc("/", loginHandler)
+	//myRouter.HandleFunc("/", homeHandler)
+
 	log.Fatal(http.ListenAndServe(":10000", myRouter))
 }
 func Serve() {
