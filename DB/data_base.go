@@ -62,14 +62,14 @@ func ConnectDB(user string, password string) *sql.DB {
 }
 
 //insert to urls table
-func InsertNewURL(db *sql.DB, urlId int, url string, user string, healthCheckType int, respOkTime int, respWarTime int, respCritTime int) {
+func InsertNewURL(db *sql.DB, url string, user string, healthCheckType int, respOkTime int, respWarTime int, respCritTime int) {
 
-	st, err0 := db.Prepare("insert into urls (id, url, userName, HealthCheck, respOkTime, respWarTime, respCritTime) values (?,?,?,?,?,?,?)")
+	st, err0 := db.Prepare("insert into urls (url, userName, HealthCheck, respOkTime, respWarTime, respCritTime) values (?,?,?,?,?,?)")
 	if err0 != nil {
 		panic(err0.Error())
 	}
 
-	_, err1 := st.Exec(urlId, url, user, healthCheckType, respOkTime, respWarTime, respCritTime)
+	_, err1 := st.Exec(url, user, healthCheckType, respOkTime, respWarTime, respCritTime)
 	if err1 != nil {
 		panic(err1.Error())
 	}

@@ -4,14 +4,25 @@
     <title>Page Title</title>
 </head>
 <body>
-<form action="action_page.php" style="border:1px solid #ccc">
+<form action="/" method="POST">
     <div class="container">
         <h1>Add new url</h1>
         <p>Add URL for monitoring.</p>
-        <hr>
 
         <label for="url"><b>Url</b></label>
         <input type="text" placeholder="Enter url" name="url" required>
+
+        <label for="healthCheck"><b>healthCheck</b></label>
+        <input type="text" placeholder="Enter healthCheck time" name="healthCheck" value="60" required>
+
+        <label for="respOkTime"><b>respOkTime</b></label>
+        <input type="text" placeholder="respOkTime" name="respOkTime" value="3" required>
+
+        <label for="respWarTime"><b>respWarTime</b></label>
+        <input type="text" placeholder="respWarTime" name="respWarTime" value="4" required>
+
+        <label for="respCritTime"><b>respCritTime</b></label>
+        <input type="text" placeholder="respCritTime" name="respCritTime" value="5" required>
 
         <div class="clearfix">
             <button type="button" class="cancelbtn">Cancel</button>
