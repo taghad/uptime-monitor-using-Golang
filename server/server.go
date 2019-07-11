@@ -4,6 +4,7 @@ import (
 	"../DB"
 	"database/sql"
 	"fmt"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	"strings"
@@ -45,19 +46,26 @@ func signIn(db *sql.DB, userName string, passIn string) {
 
 }
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, fmt.Sprintf("./%s/Sign.html", "server/"))
-	db := DB.ConnectDB("manager", "123456")
-	go signUp(db, r.FormValue("newUser"), r.FormValue("newPsw"))
-	go signIn(db, r.FormValue("userIn"), r.FormValue("pswIn"))
+	http.ServeFile(w, r, "server/Sign.html")
+	//	db := DB.ConnectDB("manager", "123456")
+	//	go signUp(db, r.FormValue("newUser"), r.FormValue("newPsw"))
+	//	go signIn(db, r.FormValue("userIn"), r.FormValue("pswIn"))
 }
 
+func handleRequset() {
+	myRouter := mux.NewRouter().StrictSlash(true)
+	DB.ConnectDB("manager", "123456")
+	myRouter.HandleFunc("/", homeHandler)
+	log.Fatal(http.ListenAndServe(":10000", myRouter))
+}
 func Serve() {
-
-	http.HandleFunc("/", homeHandler)
-	err := http.ListenAndServe(":1666", nil)
-	if err != nil {
-		log.Fatal("ListenAndServe", err)
-	} else {
-		log.Println("listen 8080")
-	}
+	handleRequset()
+	//
+	//http.HandleFunc("/", homeHandler)
+	//err := http.ListenAndServe(":1666", nil)
+	//if err != nil {
+	//	log.Fatal("ListenAndServe", err)
+	//} else {
+	//	log.Println("listen 8080")
+	//}
 }
