@@ -47,6 +47,7 @@ func signIn(db *sql.DB, userName string, passIn string) {
 }
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "server/Sign.html")
+
 	//	db := DB.ConnectDB("manager", "123456")
 	//	go signUp(db, r.FormValue("newUser"), r.FormValue("newPsw"))
 	//	go signIn(db, r.FormValue("userIn"), r.FormValue("pswIn"))
