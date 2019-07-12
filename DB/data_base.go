@@ -104,7 +104,7 @@ func InsertNewReq(db *sql.DB, url_id int, state int, status_code int, respTime i
 
 }
 
-func printReq(state int, status_code int, respTime int, timest string) {
+func PrintReq(state int, status_code int, respTime int, timest string) {
 	if state == 1 {
 		fmt.Printf("\nstate : ok    ")
 	}
@@ -171,7 +171,7 @@ func Selectreq(db *sql.DB, url_id int) {
 	var timest string
 	for results.Next() {
 		results.Scan(&state, &status_code, &respTime, &timest)
-		printReq(state, status_code, respTime, timest)
+		PrintReq(state, status_code, respTime, timest)
 
 	}
 
@@ -183,4 +183,24 @@ func IncrementUrlNum(db *sql.DB, userName string) {
 	if err0 != nil {
 		panic(err0.Error())
 	}
+}
+
+func DeleteReqs(db *sql.DB, url_id int) {
+	var reqsNum int
+	results, err0 := db.Query("SELECT count(id) FROM reqs where url_id = ?", url_id)
+	if err0 != nil {
+		panic(err0.Error())
+	}
+	hasNext := results.Next()
+	if hasNext == true {
+		results.Scan(&reqsNum)
+	}
+	if reqsNum == 100 {
+
+		_, err1 := db.Query("delete FROM reqs where url_id = ? limit 1", url_id)
+		if err1 != nil {
+			panic(err1.Error())
+		}
+	}
+
 }
