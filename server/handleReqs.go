@@ -14,10 +14,15 @@ func HandleReqs(db *sql.DB, url_id int, url string, respOkTime int, respWarTime 
 	start := time.Now()
 	resp, err0 := http.Get(url)
 	if err0 != nil {
-		panic(err0.Error())
+		log.Print(url + " status changed to critical")
 	}
 	elapsed := time.Since(start)
-	if 200 > resp.StatusCode || resp.StatusCode > 299 {
+	if resp == nil {
+		DB.DeleteReqs(db, url_id)
+		DB.InsertNewReq(db, url_id, 3, 404, int(elapsed.Nanoseconds()/1000000))
+		return
+
+	} else if 200 > resp.StatusCode || resp.StatusCode > 299 {
 		state = 3
 		log.Println(url + " status changed to critical")
 	} else if elapsed.Seconds()-float64(respOkTime) < 0 {
@@ -40,6 +45,9 @@ func makeReqs(db *sql.DB) {
 	var id, healthCheck, respOkTime, respWarTime, respCritTime int
 	var url string
 	for {
+		if t == 20000 {
+			t = 0
+		}
 		t += 5
 		results, err0 := db.Query("SELECT id, url, HealthCheck, respOkTime, respWarTime, respCritTime FROM urls ")
 		if err0 != nil {
