@@ -58,28 +58,35 @@ func getUrlHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
 		http.ServeFile(w, r, "server/getUrls.html")
+
 	case "POST":
+		http.ServeFile(w, r, "server/getUrls.html")
 		url := r.FormValue("url")
 		healthCheck, _ := strconv.Atoi(r.FormValue("healthCheck"))
 		respOkTime, _ := strconv.Atoi(r.FormValue("respOkTime"))
 		respWarTime, _ := strconv.Atoi(r.FormValue("respWarTime"))
 		respCritTime, _ := strconv.Atoi(r.FormValue("respCritTime"))
-		urlId, _ := DB.SelectUrl(db, url, onlineUser)
-		if urlId == 0 {
-			addUrl(db, url, onlineUser, healthCheck, respOkTime, respWarTime, respCritTime)
-		} else {
+		if strings.Compare(url, "") != 0 {
+			fmt.Println("jeeeediiiiii")
+			urlId, _ := DB.SelectUrl(db, url, onlineUser)
+			_, urlNum := DB.SelectUser(db, onlineUser)
+			if (urlId == 0) && (urlNum < 5) {
+				DB.IncrementUrlNum(db, onlineUser)
+				addUrl(db, url, onlineUser, healthCheck, respOkTime, respWarTime, respCritTime)
 
+				http.Redirect(w, r, "http://localhost:10000", 301)
+			} else if urlNum == 5 {
+				fmt.Fprintf(w, "you have now 5 urls\n you can't add anymore")
+
+			}
 		}
-
 	default:
-		fmt.Fprintf(w, "Sorry, only GET and POST methods are supported.")
+		fmt.Fprintf(w, "Sorry, only GET method is supported.")
 	}
 
 }
 
 func logHandler(w http.ResponseWriter, r *http.Request) {
-
-	db = DB.ConnectDB("manager", "123456")
 
 	switch r.Method {
 	case "GET":
@@ -88,11 +95,35 @@ func logHandler(w http.ResponseWriter, r *http.Request) {
 	case "POST":
 		userName := r.FormValue("newUser")
 		password := r.FormValue("newPsw")
+		userIn := r.FormValue("userIn")
+		passIn := r.FormValue("pswIn")
+		url := r.FormValue("url")
+		healthCheck, _ := strconv.Atoi(r.FormValue("healthCheck"))
+		respOkTime, _ := strconv.Atoi(r.FormValue("respOkTime"))
+		respWarTime, _ := strconv.Atoi(r.FormValue("respWarTime"))
+		respCritTime, _ := strconv.Atoi(r.FormValue("respCritTime"))
+
 		signup := signUp(db, userName, password)
+		signin := signIn(db, userIn, passIn)
 		if signup {
-			onlineUser = userName
-			http.Redirect(w, r, "http://localhost:10000/getUrl", 301)
-			myRouter.HandleFunc("/getUrl", getUrlHandler)
+			onlineUser = strings.Replace(onlineUser, onlineUser, userName, -1)
+			http.ServeFile(w, r, "server/getUrls.html")
+		} else if signin {
+			onlineUser = strings.Replace(onlineUser, onlineUser, userIn, -1)
+			http.ServeFile(w, r, "server/getUrls.html")
+		} else {
+			http.ServeFile(w, r, "server/Sign.html")
+		}
+		if strings.Compare(url, "") != 0 {
+			println(onlineUser)
+			urlId, _ := DB.SelectUrl(db, url, onlineUser)
+			_, urlNum := DB.SelectUser(db, onlineUser)
+			if (urlId == 0) && (urlNum < 5) {
+				DB.IncrementUrlNum(db, onlineUser)
+				addUrl(db, url, onlineUser, healthCheck, respOkTime, respWarTime, respCritTime)
+			} else if urlNum == 5 {
+				log.Fatal(onlineUser + " have 5 urls yet")
+			}
 		}
 
 	default:
@@ -102,14 +133,13 @@ func logHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleRequset() {
-	myRouter = mux.NewRouter().StrictSlash(true)
-	DB.ConnectDB("manager", "123456")
-
 	myRouter.HandleFunc("/", logHandler)
 
 	log.Fatal(http.ListenAndServe(":10000", myRouter))
 }
-func Serve() {
-	handleRequset()
 
+func Serve() {
+	myRouter = mux.NewRouter().StrictSlash(true)
+	db = DB.ConnectDB("manager", "123456")
+	handleRequset()
 }

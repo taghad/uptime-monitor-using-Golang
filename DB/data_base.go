@@ -176,3 +176,11 @@ func Selectreq(db *sql.DB, url_id int) {
 	}
 
 }
+
+func IncrementUrlNum(db *sql.DB, userName string) {
+
+	_, err0 := db.Query("update users set urlNum = urlNum + 1 where userName = ?", userName)
+	if err0 != nil {
+		panic(err0.Error())
+	}
+}
