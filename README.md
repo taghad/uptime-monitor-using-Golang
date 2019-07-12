@@ -21,7 +21,7 @@ granting for manager:
 ```bash
 mysql> GRANT ALL PRIVILEGES ON monitorDB.* TO 'manager'@'localhost';
 ```
-Then you can run the url uptime-monitor simply by go run:
+Then you can run the uptime-monitor simply by go run:
 ```bash
  go run main.go
 ```
