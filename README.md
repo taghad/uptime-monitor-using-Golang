@@ -9,15 +9,15 @@ Written this task for internship.
 
 
 #### Deployment
-First create the monitorDB.sql.
+First create the monitorDB.sql:
 ```bash
 mysql> CREATE DATABASE monitorDB;
 ```
-create manager user.
+create manager user:
 ```bash
 mysql> CREATE USER 'manager'@'localhost' IDENTIFIED BY '123456';
 ```
-granting for manager.
+granting for manager:
 ```bash
 mysql> GRANT ALL PRIVILEGES ON monitorDB.* TO 'manager'@'localhost';
 ```
