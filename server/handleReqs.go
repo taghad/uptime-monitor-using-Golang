@@ -42,26 +42,27 @@ func HandleReqs(db *sql.DB, url_id int, url string, respOkTime int, respWarTime 
 //just here use database dirty
 //we hae bu here
 func makeReqs(db *sql.DB) {
-	var t int
-	t = 0
+	//var t int
 	var id, healthCheck, respOkTime, respWarTime, respCritTime int
 	var url string
 	for {
-		if t == 20000 {
+		//delete t as soon as posible
+		/*if t == 20000 {
 			t = 0
 		}
-		t += 5
+		t += 5*/
 		results, err0 := db.Query("SELECT id, url, HealthCheck, respOkTime, respWarTime, respCritTime FROM urls ")
 		if err0 != nil {
 			panic(err0.Error())
 		}
 		for results.Next() {
 			results.Scan(&id, &url, &healthCheck, &respOkTime, &respWarTime, &respCritTime)
-			if t%healthCheck == 0 {
+			//commit this part because of t variable
+			/*if t%healthCheck == 0 {
 				go HandleReqs(db, id, url, respOkTime, respWarTime, respCritTime)
 
-			}
-			//time.Sleep(5 * time.Second)
+			}*/
+			time.Sleep(5 * time.Second)
 		}
 
 	}
