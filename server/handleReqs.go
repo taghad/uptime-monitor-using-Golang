@@ -8,7 +8,8 @@ import (
 	"net/http"
 	"time"
 )
-
+//find bug!!!
+//we need to sleep for any url 5seconds but we sleep one by one
 func HandleReqs(db *sql.DB, url_id int, url string, respOkTime int, respWarTime int, respCritTime int) {
 	var state int
 	start := time.Now()
@@ -19,7 +20,7 @@ func HandleReqs(db *sql.DB, url_id int, url string, respOkTime int, respWarTime 
 	elapsed := time.Since(start)
 	if resp == nil {
 		DB.DeleteReqs(db, url_id)
-		DB.InsertNewReq(db, url_id, 3, 404, int(elapsed.Nanoseconds()/1000000))
+		DB.InsertNewReq(db, url_id, 3, 404, int(elapsed.Seconds()))
 		return
 
 	} else if 200 > resp.StatusCode || resp.StatusCode > 299 {
@@ -35,10 +36,11 @@ func HandleReqs(db *sql.DB, url_id int, url string, respOkTime int, respWarTime 
 		log.Println(url + " status changed to critical")
 	}
 	DB.DeleteReqs(db, url_id)
-	DB.InsertNewReq(db, url_id, state, resp.StatusCode, int(elapsed.Nanoseconds()/1000000))
+	DB.InsertNewReq(db, url_id, state, resp.StatusCode, int(elapsed.Seconds()))
 }
 
 //just here use database dirty
+//we hae bu here
 func makeReqs(db *sql.DB) {
 	var t int
 	t = 0
@@ -59,7 +61,7 @@ func makeReqs(db *sql.DB) {
 				go HandleReqs(db, id, url, respOkTime, respWarTime, respCritTime)
 
 			}
-			time.Sleep(5 * time.Second)
+			//time.Sleep(5 * time.Second)
 		}
 
 	}
@@ -73,7 +75,7 @@ func printReq(w http.ResponseWriter, state int, status_code int, respTime int, t
 		fmt.Fprintf(w, "state :critical    ")
 	}
 	fmt.Fprintf(w, "status code : %d    ", status_code)
-	fmt.Fprintf(w, "response time(ns) : %d    ", respTime)
+	fmt.Fprintf(w, "response time(s) : %d    ", respTime)
 	fmt.Fprintf(w, "timestamp : %s    \n", timest)
 }
 
